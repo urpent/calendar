@@ -1,6 +1,7 @@
 package calendar
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
@@ -49,6 +50,10 @@ func TestMergeThreeTimesIntoOne(t *testing.T) {
 
 	if len(merged) != 1 {
 		t.Error("Merged fail: should be len 1 but get len ", len(merged))
+	} else if !merged[0].StartTime.Equal(timeNow) {
+		t.Error(fmt.Sprintf("Merged fail: start time should be %s but is %s", timeNow, merged[0].StartTime))
+	} else if !merged[0].EndTime.Equal(timeNow.Add(30 * time.Minute)) {
+		t.Error(fmt.Sprintf("Merged fail: end time should be %s but is %s", timeNow.Add(30*time.Minute), merged[0].EndTime))
 	}
 
 	//for _, e := range merged {

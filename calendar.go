@@ -111,40 +111,50 @@ func ArrangeOverlap(merged []TimeRange) []TimeRange {
 	//log.Println("--------------------")
 
 	mergedFlattened := make([]TimeRange, 0, len(merged))
-
 	mergedFlattened = append(mergedFlattened, merged[0])
-	currentTimeRange := merged[0]
 
-	for i := 0; i < len(merged); i++ {
-
-		//log.Println("@@@@@@@@@@@@@@@@")
-
-		currentEnd := currentTimeRange.EndTime
-
-		nextStart := merged[i].StartTime
-		nextEnd := merged[i].EndTime
-
-		if currentEnd.After(nextStart) {
-			//log.Println("1. After",currentEnd.Format("03:04pm"),nextStart.Format("03:04pm"))
-
-			currentTimeRange.EndTime = maxTime(currentEnd, nextEnd)
-		} else if currentEnd.Equal(nextStart) {
-			//log.Println("2. Equal",currentEnd.Format("03:04pm"),nextStart.Format("03:04pm"))
-
-			mergedFlattened[len(mergedFlattened)-1].EndTime = maxTime(currentEnd, nextEnd)
+	for _, t := range merged {
+		if len(mergedFlattened) == 0 || mergedFlattened[len(merged)-1].EndTime.Before(t.StartTime) {
+			mergedFlattened = append(mergedFlattened, t)
 		} else {
-			//log.Println("3. add to output")
-
-			currentTimeRange = merged[i]
-
-			if mergedFlattened[len(mergedFlattened)-1].EndTime == currentTimeRange.StartTime {
-				mergedFlattened[len(mergedFlattened)-1].EndTime = currentTimeRange.EndTime
-			} else {
-				mergedFlattened = append(mergedFlattened, currentTimeRange)
-
-			}
+			mergedFlattened[len(merged)-1].EndTime = maxTime(mergedFlattened[len(merged)-1].EndTime, t.EndTime)
 		}
 	}
+
+	//Previous Code (To be remove).
+	//currentTimeRange := merged[0]
+	//
+	//for i := 0; i < len(merged); i++ {
+	//
+	//	//log.Println("@@@@@@@@@@@@@@@@")
+	//
+	//	currentEnd := currentTimeRange.EndTime
+	//
+	//	nextStart := merged[i].StartTime
+	//	nextEnd := merged[i].EndTime
+	//
+	//	if currentEnd.After(nextStart) {
+	//		//log.Println("1. After",currentEnd.Format("03:04pm"),nextStart.Format("03:04pm"))
+	//
+	//		currentTimeRange.EndTime = maxTime(currentEnd, nextEnd)
+	//	} else if currentEnd.Equal(nextStart) {
+	//		//log.Println("2. Equal",currentEnd.Format("03:04pm"),nextStart.Format("03:04pm"))
+	//
+	//		mergedFlattened[len(mergedFlattened)-1].EndTime = maxTime(currentEnd, nextEnd)
+	//	} else {
+	//		//log.Println("3. add to output")
+	//
+	//		currentTimeRange = merged[i]
+	//
+	//		if mergedFlattened[len(mergedFlattened)-1].EndTime == currentTimeRange.StartTime {
+	//			mergedFlattened[len(mergedFlattened)-1].EndTime = currentTimeRange.EndTime
+	//		} else {
+	//			mergedFlattened = append(mergedFlattened, currentTimeRange)
+	//
+	//		}
+	//	}
+	//}
+
 	return mergedFlattened
 }
 
